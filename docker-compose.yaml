@@ -1,0 +1,28 @@
+version: "3.9"
+
+services:
+  app:
+    build: .
+    ports:
+      - "8080:8080"
+    depends_on:
+      - db
+    environment:
+      - HTTP_PORT=8080
+      - DB_CONN=postgres://postgres:postgres@db:5432/clicks?sslmode=disable
+      - FLUSH_INTERVAL=1m
+      - SHUTDOWN_TIMEOUT=5s
+  db:
+    image: postgres:13-alpine
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=clicks
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      - ./migrations:/migrations
+    ports:
+      - "5432:5432"
+
+volumes:
+  pgdata:
